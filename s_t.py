@@ -8,52 +8,65 @@ import glob
 from gtts import gTTS
 from googletrans import Translator
 
-# Estilo global
+# Estilo oscuro
 st.markdown("""
     <style>
+        body {
+            background-color: #121212;
+        }
+        .main {
+            background-color: #121212;
+            color: #E0E0E0;
+        }
+        .stApp {
+            background-color: #121212;
+        }
         .stButton > button {
-            background-color: #4A90E2;
+            background-color: #7B61FF;
             color: white;
-            border-radius: 8px;
-            height: 3em;
-            width: 100%;
-            font-size: 18px;
-        }
-        .custom-section {
-            background-color: #F0F2F6;
-            padding: 20px;
             border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .title-text {
-            text-align: center;
-            font-size: 32px;
-            font-weight: bold;
-        }
-        .sub-text {
-            text-align: center;
             font-size: 18px;
+            padding: 0.75em 1em;
+        }
+        .custom-container {
+            background-color: #1E1E1E;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
             margin-bottom: 20px;
+        }
+        .title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #E0E0E0;
+            text-align: center;
+            margin-bottom: 0.2em;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #B0B0B0;
+            text-align: center;
+            margin-bottom: 1em;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# Título y descripción
-st.markdown('<div class="title-text">🎧 TRADUCTOR</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-text">Escucho lo que quieres traducir.</div>', unsafe_allow_html=True)
+# Título
+st.markdown('<div class="title">🎧 TRADUCTOR</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Escucho lo que dices y traduzco con voz.</div>', unsafe_allow_html=True)
 
-# Imagen decorativa
+# Imagen
 image = Image.open('OIG7.jpg')
 st.image(image, width=300)
 
 # Sidebar
 with st.sidebar:
-    st.subheader("Traductor por voz")
-    st.write("Presiona el botón, cuando escuches la señal habla lo que quieres traducir. Luego selecciona la configuración de idioma.")
+    st.subheader("🎤 Traductor por voz")
+    st.markdown("Presiona el botón para grabar tu voz. Luego elige el idioma de entrada y salida.")
 
-# Sección del botón de escucha
-st.markdown('<div class="custom-section">', unsafe_allow_html=True)
-st.markdown("### 🎙️ Toca el botón y habla lo que quieres traducir")
+# Sección del botón
+st.markdown('<div class="custom-container">', unsafe_allow_html=True)
+st.markdown("### 🎙️ Toca el botón para hablar")
 
 stt_button = Button(label="🎤 Escuchar", width=300)
 stt_button.js_on_event("button_click", CustomJS(code="""
@@ -77,7 +90,7 @@ stt_button.js_on_event("button_click", CustomJS(code="""
 result = streamlit_bokeh_events(
     stt_button,
     events="GET_TEXT",
-    key="listen",
+    key="listen-dark",
     refresh_on_update=False,
     override_height=75,
     debounce_time=0
@@ -97,9 +110,11 @@ if result and "GET_TEXT" in result:
     translator = Translator()
     text = str(result.get("GET_TEXT"))
 
-    in_lang = st.selectbox("Selecciona el lenguaje de Entrada", ("Inglés", "Español", "Bengali", "Coreano", "Mandarín", "Japonés"))
-    out_lang = st.selectbox("Selecciona el lenguaje de salida", ("Inglés", "Español", "Bengali", "Coreano", "Mandarín", "Japonés"))
-    accent = st.selectbox("Selecciona el acento", ("Defecto", "Español", "Reino Unido", "Estados Unidos", "Canada", "Australia", "Irlanda", "Sudáfrica"))
+    st.markdown('<div class="custom-container">', unsafe_allow_html=True)
+    in_lang = st.selectbox("Lenguaje de entrada", ("Inglés", "Español", "Bengali", "Coreano", "Mandarín", "Japonés"))
+    out_lang = st.selectbox("Lenguaje de salida", ("Inglés", "Español", "Bengali", "Coreano", "Mandarín", "Japonés"))
+    accent = st.selectbox("Acento", ("Defecto", "Español", "Reino Unido", "Estados Unidos", "Canada", "Australia", "Irlanda", "Sudáfrica"))
+    st.markdown('</div>', unsafe_allow_html=True)
 
     lang_map = {"Inglés": "en", "Español": "es", "Bengali": "bn", "Coreano": "ko", "Mandarín": "zh-cn", "Japonés": "ja"}
     tld_map = {"Defecto": "com", "Español": "com.mx", "Reino Unido": "co.uk", "Estados Unidos": "com", "Canada": "ca", "Australia": "com.au", "Irlanda": "ie", "Sudáfrica": "co.za"}
@@ -126,7 +141,7 @@ if result and "GET_TEXT" in result:
             st.markdown("### Texto traducido:")
             st.write(translated)
 
-    # Limpieza de audios antiguos
+    # Limpieza
     def remove_files(n_days=7):
         threshold = time.time() - n_days * 86400
         for f in glob.glob("temp/*.mp3"):
@@ -134,7 +149,6 @@ if result and "GET_TEXT" in result:
                 os.remove(f)
 
     remove_files()
-
 
         
     
