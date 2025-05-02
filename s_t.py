@@ -9,7 +9,7 @@ import glob
 from gtts import gTTS
 from googletrans import Translator
 
-# Estilos personalizados renovados
+# Estilos personalizados actualizados
 st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;600&display=swap');
@@ -55,8 +55,11 @@ st.markdown("""
         }
 
         .stSidebar {
-            background: #f8faff;
-            border-right: 1px solid #ddd;
+            background: #f8faff !important;
+        }
+
+        .stSidebar > div {
+            color: black !important;
         }
 
         .css-1kyxreq {  /* Oculta los créditos de Streamlit abajo */
@@ -179,6 +182,7 @@ with st.container():
                         os.remove(f)
 
         remove_files(7)
+
 
         
     
